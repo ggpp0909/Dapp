@@ -40,4 +40,4 @@ isApprovedForAll에 operator에 sale CA address를 넣고 owner에 계정주소�
 
 이후 isApprovedForAll하면 true 되어있는걸 확인할 수 있고 setForSaleAnimalToken도 정상 실행된다.
 
- 
+ (onSaleAnimalTokenArray에 index값인 0을 넣고 call할시 1(token id)이 출력됨)
