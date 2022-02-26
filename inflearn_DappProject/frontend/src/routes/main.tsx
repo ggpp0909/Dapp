@@ -1,13 +1,14 @@
 import React, {FC, useState} from "react";
 import {Box, Text, Flex, Button} from "@chakra-ui/react"
 import { mintAnimalTokenContract } from "../web3Config";
+import AnimalCard from "../components/AnimalCard";
 
 interface MainProps {
   account: string;
 }
 
 const Main: FC<MainProps> = ({ account }) => {
-  const [newAnimalCard, setNewAnimalCard] = useState<string>();
+  const [newAnimalType, setNewAnimalType] = useState<string>();
 
   const onClickMint = async () => {
     try {
@@ -18,6 +19,14 @@ const Main: FC<MainProps> = ({ account }) => {
         from: account
       });
       console.log(response);
+      if (response.status) {
+        const balanceLength = await mintAnimalTokenContract.methods.balanceOf(account).call();
+        const animalTokenId = await mintAnimalTokenContract.methods.tokenOfOwnerByIndex(account, parseInt(balanceLength) - 1).call();
+        const animalType = await mintAnimalTokenContract.methods.animalTypes(animalTokenId).call();
+        setNewAnimalType(animalType);
+
+      }
+
     } catch(error) {
       console.error(error);
     }
@@ -26,7 +35,7 @@ const Main: FC<MainProps> = ({ account }) => {
   return (
   <Flex w="full" h="100vh" justifyContent="center" alignItems="center" direction="column">
     <Box>
-      {newAnimalCard ? <div>AnimalCard</div>: <Text>Let's mint Animal Card!</Text>}
+      {newAnimalType ? <AnimalCard animalType={newAnimalType} />: <Text>Let's mint Animal Card!</Text>}
     </Box>
     <Button mt={1} size="md" colorScheme="teal" onClick={onClickMint}>Mint</Button>
   </Flex>
