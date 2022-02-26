@@ -50,3 +50,26 @@ isApprovedForAll에 operator에 sale CA address를 넣고 owner에 계정주소�
 
 구매는 토큰 아이디(1)만 입력하면 됨, 단 owner가 아닌 계정에서 value를 10이상으로
 
+
+
+# 프론트엔드
+
+## 메인페이지 작성
+
+```
+mintanimaltoken함수의 balanceOf:
+해당 계정이 가지고 있는 animaltoken의 개수를 반환 즉, mint하거나 누구한테 nft를 사오면 개수가 증가
+
+mintanimaltoken함수의 tokenOfOwnerByIndex:
+해당 계정의 해당 인덱스의 tokenId를 반환
+
+mintanimaltoken함수의 animalType:
+해당 tokenId의 animalType 반환
+
+
+```
+
+
+
+
+
