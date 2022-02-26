@@ -2,6 +2,8 @@ import React, { FC, useEffect, useState } from "react";
 import { Button } from "@chakra-ui/react"
 import { BrowserRouter, Routes, Route} from "react-router-dom"
 import Main from "./routes/main";
+import Layout from "./components/Layout";
+import MyAnimal from "./routes/my-animal";
 
 const App: FC = () => {
   // 메타마스크와 연결
@@ -33,9 +35,12 @@ const App: FC = () => {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Main account={account}/>}/>
-      </Routes>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Main account={account}/>}/>
+          <Route path="my-animal" element={<MyAnimal account={account}/>}/>
+        </Routes>
+      </Layout>
     </BrowserRouter>
   );
 };
