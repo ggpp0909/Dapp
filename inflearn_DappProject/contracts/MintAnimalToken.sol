@@ -15,7 +15,7 @@ contract MintAnimalToken is ERC721Enumerable {
     struct AnimalTokenData {
         uint256 animalTokenId;
         uint256 animalType;
-        uint256 animalPrices;
+        uint256 animalPrice;
     }
 
     function mintAnimalToken() public {

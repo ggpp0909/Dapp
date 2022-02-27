@@ -1,7 +1,11 @@
-import { Box, Button, Flex, Grid, Text } from "@chakra-ui/react";
+import { Flex, Button, Grid, Text } from "@chakra-ui/react";
 import React, { FC, useEffect, useState } from "react";
 import MyAnimalCard, { IMyAnimalCard } from "../components/MyAnimalCard";
-import { mintAnimalTokenContract, saleAnimalTokenAddress, saleAnimalTokenContract } from "../web3Config";
+import {
+  mintAnimalTokenContract,
+  saleAnimalTokenAddress,
+  saleAnimalTokenContract,
+} from "../web3Config";
 
 interface MyAnimalProps {
   account: string;
@@ -17,24 +21,39 @@ const MyAnimal: FC<MyAnimalProps> = ({ account }) => {
         .balanceOf(account)
         .call();
 
-      const tempAnimalCardArray = [];
+      if (balanceLength === "0") return;
 
-      for (let i = 0; i < parseInt(balanceLength); i++) {
-        const animalTokenId = await mintAnimalTokenContract.methods
-          .tokenOfOwnerByIndex(account, i)
-          .call();
+      const tempAnimalCardArray: IMyAnimalCard[] = [];
 
-        const animalType = await mintAnimalTokenContract.methods
-          .animalTypes(animalTokenId)
-          .call();
+      const response = await mintAnimalTokenContract.methods
+        .getAnimalTokens(account)
+        .call();
 
-        const animalPrice = await saleAnimalTokenContract.methods
-          .animalTokenPrices(animalTokenId)
-          .call();
-        tempAnimalCardArray.push({animalTokenId, animalType, animalPrice});
-      }
+      response.map((v: IMyAnimalCard) => {
+        tempAnimalCardArray.push({
+          animalTokenId: v.animalTokenId,
+          animalType: v.animalType,
+          animalPrice: v.animalPrice,
+        });
+      });
+
+      console.log(tempAnimalCardArray);
 
       setAnimalCardArray(tempAnimalCardArray);
+      // console.log("test")
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const getIsApprovedForAll = async () => {
+    try {
+      const response = await mintAnimalTokenContract.methods
+        .isApprovedForAll(account, saleAnimalTokenAddress)
+        .call();
+
+      if (response) {
+        setSaleStatus(response);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -42,67 +61,54 @@ const MyAnimal: FC<MyAnimalProps> = ({ account }) => {
 
   const onClickApproveToggle = async () => {
     try {
-      if(!account) return;
+      if (!account) return;
 
       const response = await mintAnimalTokenContract.methods
         .setApprovalForAll(saleAnimalTokenAddress, !saleStatus)
         .send({ from: account });
-      
-      if (response.status) {
-        setSaleStatus(!saleStatus)
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
-  const getIsApprovedForAll = async () => {
-    try {
-      const response = await mintAnimalTokenContract.methods.isApprovedForAll(account, saleAnimalTokenAddress).call();
-      if (response) {
-        setSaleStatus(response)
+      if (response.status) {
+        setSaleStatus(!saleStatus);
       }
-      console.log(response);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    if (!account) return; // 주의할점, 처음에 account가 안내려옴, 실행에는 account가 필요한데 없는데 실행하라고 하면 오류뜸
+    if (!account) return;
+
     getIsApprovedForAll();
     getAnimalTokens();
   }, [account]);
 
-  useEffect(() => {
-    console.log(animalCardArray); //확인용
-  }, [animalCardArray]);
-
   return (
     <>
-      <Flex alignItems="center" justifyContent="center" mb={3}>
-        <Text display="inline-block">{saleStatus ? "True" : "False"}</Text>
+      <Flex alignItems="center">
+        <Text display="inline-block">
+          Sale Status : {saleStatus ? "True" : "False"}
+        </Text>
         <Button
           size="xs"
           ml={2}
           colorScheme={saleStatus ? "red" : "blue"}
           onClick={onClickApproveToggle}
         >
-          {saleStatus ? "Cancle" : "Approve"}
+          {saleStatus ? "Cancel" : "Approve"}
         </Button>
       </Flex>
-      <Grid templateColumns="repeat(4, 1fr)" gap={8}>
+      <Grid templateColumns="repeat(4, 1fr)" gap={8} mt={4}>
         {animalCardArray &&
           animalCardArray.map((v, i) => {
             return (
               <MyAnimalCard
                 key={i}
+                animalTokenId={v.animalTokenId}
                 animalType={v.animalType}
                 animalPrice={v.animalPrice}
-                animalTokenId={v.animalTokenId}
                 saleStatus={saleStatus}
                 account={account}
-              ></MyAnimalCard>
+              />
             );
           })}
       </Grid>
