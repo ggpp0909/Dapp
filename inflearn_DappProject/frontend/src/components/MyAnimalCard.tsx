@@ -67,7 +67,7 @@ const MyAnimalCard: FC<MyAnimalCardProps> = ({
                 value={sellPrice}
                 onChange={onChangeSellPrice}
               />
-              <InputRightAddon children="Matic" />
+              <InputRightAddon children="Ether" />
             </InputGroup>
             <Button size="sm" colorScheme="green" mt={2} onClick={onClickSell}>
               Sell
@@ -75,7 +75,7 @@ const MyAnimalCard: FC<MyAnimalCardProps> = ({
           </>
         ) : (
           <Text d="inline-block">
-            {web3.utils.fromWei(myAnimalPrice)} Matic
+            {web3.utils.fromWei(myAnimalPrice)} Ether
           </Text>
         )}
       </Box>

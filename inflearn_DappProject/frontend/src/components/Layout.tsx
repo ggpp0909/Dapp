@@ -15,6 +15,9 @@ const Layout:FC = ({ children }) => {
         <Link to="my-animal">
          <Button size="sm" colorScheme="blue" >My animals</Button>
         </Link>
+        <Link to="sale-animal">
+         <Button size="sm" colorScheme="green" >Sale animals</Button>
+        </Link>
       </Flex>
       <Flex direction="column" h="full" justifyContent="center" alignContent="center">
         {children}
